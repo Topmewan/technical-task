@@ -1,16 +1,23 @@
-exports.getAllTz = (req,res,next) => {
-    res.send('get all tz route');
+const Product = require('../models/Products');
+
+exports.getAllProducts = async (req,res,next) => {
+    const products = await Product.find();
+
+    res.status(200).json({
+        sucess:true,
+        data:products
+    })
 };
 
-exports.createNewTz = (req,res,next) => {
-    res.send('create new tz route');
+exports.createNewProduct= (req,res,next) => {
+    res.send('create new product route');
 };
 
-exports.updateTzRouteById = (req,res,next) => {
-    res.send('update tz route');
+exports.updateProductRouteById = (req,res,next) => {
+    res.send('update product route');
 };
 
-exports.deleteTzRouteById = (req,res,next) => {
-    res.send('delete tz route');
+exports.deleteProductRouteById = (req,res,next) => {
+    res.send('delete product route');
 };
 

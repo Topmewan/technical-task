@@ -3,8 +3,8 @@ const Controllers = require('../controllers/Controllers');
 
 const router = express.Router();
 
-router.route('/').get(Controllers.getAllTz).post(Controllers.createNewTz);
+router.route('/').get(Controllers.getAllProducts).post(Controllers.createNewProduct);
 
-router.route('/:id').put(Controllers.updateTzRouteById).delete(Controllers.deleteTzRouteById);
+router.route('/:id').put(Controllers.updateProductRouteById).delete(Controllers.deleteProductRouteById);
 
 module.exports = router;
