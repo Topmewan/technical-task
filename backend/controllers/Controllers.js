@@ -1,23 +1,24 @@
 const Product = require('../models/Products');
+const asyncHandler = require('../middleware/asyncHandler');
 
-exports.getAllProducts = async (req,res,next) => {
+exports.getAllProducts = asyncHandler(async (req,res,next) => {
     const products = await Product.find();
 
     res.status(200).json({
-        sucess:true,
+        success:true,
         data:products
     })
-};
+});
 
-exports.createNewProduct= (req,res,next) => {
+exports.createNewProduct= asyncHandler(async (req,res,next) => {
     res.send('create new product route');
-};
+});
 
-exports.updateProductRouteById = (req,res,next) => {
+exports.updateProductRouteById = asyncHandler(async  (req,res,next) => {
     res.send('update product route');
-};
+});
 
-exports.deleteProductRouteById = (req,res,next) => {
+exports.deleteProductRouteById = asyncHandler(async (req,res,next) => {
     res.send('delete product route');
-};
+});
 
