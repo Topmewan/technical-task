@@ -2,7 +2,7 @@ import {AppBar, Toolbar, Typography} from "@material-ui/core";
 
 function Navbar() {
     return (
-        <AppBar>
+        <AppBar position='static'>
             <Toolbar>
                 <Typography variant="h5">Продукты</Typography>
             </Toolbar>

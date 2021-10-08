@@ -1,7 +1,7 @@
 const Product = require('../models/Products');
 const asyncHandler = require('../middleware/asyncHandler');
 const ErrorResponse = require('../utils/errorPesponse');
-const {param} = require("express/lib/router");
+
 
 exports.getAllProducts = asyncHandler(async (req,res,next) => {
 
@@ -31,6 +31,7 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
     }
 
     const products = await  query;
+
     res.status(200).json({
         success: true,
         data: products
@@ -50,7 +51,8 @@ exports.updateProductRouteById = asyncHandler(async  (req,res,next) => {
     let product = await Product.findById(req.params.id);
 
     if(!product) {
-    return next(new ErrorResponse(`Product with id ${req.params.id} was not found`,404))}
+    return next(new ErrorResponse(`Product with id ${req.params.id} was not found`,404));
+    }
 
     product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators:true})
 
