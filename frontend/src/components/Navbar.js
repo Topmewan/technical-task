@@ -4,7 +4,7 @@ function Navbar() {
     return (
         <AppBar position='static'>
             <Toolbar>
-                <Typography variant="h5">Продукты</Typography>
+                <Typography variant="h5">Каталог</Typography>
             </Toolbar>
         </AppBar>
     );

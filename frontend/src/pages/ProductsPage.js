@@ -1,4 +1,4 @@
-import {CircularProgress, Container, Grid, makeStyles} from "@material-ui/core";
+import {CircularProgress, Container, Grid, makeStyles, Slider, Typography, Paper, TextField} from "@material-ui/core";
 import {useState, useEffect} from "react";
 
 import axios from "axios";
@@ -51,6 +51,42 @@ const ProductsPage = () =>  {
 
     return (
         <Container className={classes.root}>
+            <Paper>
+                <Grid container>
+                    <Grid item xs={12} sm={6}>
+                        <Typography gutterBottom>Фильтр</Typography>
+
+                        <div>
+                            <Slider
+                                min={0}
+                                max={100}
+                            />
+
+                            <div>
+                                <TextField
+                                    size='small'
+                                    id='lower'
+                                    label='Минимальная цена'
+                                    variant='outlined'
+                                    type='number'
+                                    disabled={loading}
+                                    value={0}
+                                    />
+
+                                <TextField
+                                    size='small'
+                                    id='upper'
+                                    label='Максимальная цена'
+                                    variant='outlined'
+                                    type='number'
+                                    disabled={loading}
+                                    value={75}
+                                />
+                            </div>
+                        </div>
+                    </Grid>
+                </Grid>
+            </Paper>
 
             <Grid container spacing={2}>
                 {loading ? (
