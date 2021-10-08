@@ -15,7 +15,7 @@ app.use(express.json());
 //Routes
 app.use('/api/v1/tz', require('./routes/Routes'));
 
-
+//Error Handler
 app.use(errorHandler);
 
 const PORT = process.env.PORT;

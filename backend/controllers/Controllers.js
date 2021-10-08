@@ -1,24 +1,70 @@
 const Product = require('../models/Products');
 const asyncHandler = require('../middleware/asyncHandler');
+const ErrorResponse = require('../utils/errorPesponse');
+const {param} = require("express/lib/router");
 
 exports.getAllProducts = asyncHandler(async (req,res,next) => {
-    const products = await Product.find();
+
+    let query;
+
+    const reqQuery = {...req.query};
+
+    const removeFields = ['sort'];
+    console.log(reqQuery);
+
+    removeFields.forEach(val => delete reqQuery[val]);
+    console.log(reqQuery);
+
+
+    let queryStr = JSON.stringify(reqQuery);
+
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `${match}`);
+
+    const products = await Product.find( JSON.parse(queryStr));
+    console.log(queryStr);
+
 
     res.status(200).json({
-        success:true,
-        data:products
-    })
+        success: true,
+        data: products
+    });
 });
 
 exports.createNewProduct= asyncHandler(async (req,res,next) => {
-    res.send('create new product route');
+    const product = await Product.create(req.body);
+
+    res.status(201).json({
+        success:true,
+        data:product,
+    });
 });
 
 exports.updateProductRouteById = asyncHandler(async  (req,res,next) => {
-    res.send('update product route');
+    let product = await Product.findById(req.params.id);
+
+    if(!product) {
+    return next(new ErrorResponse(`Product with id ${req.params.id} was not found`,404))}
+
+    product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators:true})
+
+    res.status(201).json({
+        success:true,
+        data:product,
+    });
 });
 
 exports.deleteProductRouteById = asyncHandler(async (req,res,next) => {
-    res.send('delete product route');
+    let product = await Product.findById(req.params.id);
+
+    if (!product) {
+        return next(new ErrorResponse(`Product with id ${req.params.id} was not found`, 404))
+    }
+
+    await product.remove();
+
+    res.status(200).json({
+        success: true,
+        data: {}
+    });
 });
 

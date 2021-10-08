@@ -8,7 +8,7 @@ const productsSchema = new mongoose.Schema({
     },
     rating: {
         type: Number,
-        required: [true.valueOf, 'Please provide a rating for a product'],
+        required: [true, 'Please provide a rating for a product'],
     },
     description: {
         type: String,
