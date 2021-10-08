@@ -7,12 +7,21 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
 
     let query;
 
+    let values = {
+        filtering: {},
+        sorting: {},
+    };
+
     const reqQuery = {...req.query};
 
     const removeFields = ['sort'];
 
     removeFields.forEach(val => delete reqQuery[val]);
 
+    const filterKeys = Object.keys(reqQuery);
+    const filterValues = Object.values(reqQuery);
+
+    filterKeys.forEach((val,index) => values.filtering[val] = filterValues[index]);
 
     let queryStr = JSON.stringify(reqQuery);
 
@@ -23,6 +32,17 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
     if(req.query.sort) {
         const sortByArr = req.query.sort.split(',')
 
+        sortByArr.forEach(val => {
+            let order;
+            if(val[0] === '-'){
+                order='descending'
+            } else {
+                order = 'ascending';
+            }
+
+            values.sorting[val.replace('-','')] = order;
+        })
+
         const sortByStr = sortByArr.join(' ');
 
         query = query.sort(sortByStr);
@@ -32,14 +52,24 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
 
     const products = await  query;
 
+    const maxPrice = await Product.find().sort({ price: -1}).limit(1).select('-id price');
+
+    const minPrice = await Product.find().sort({price:1}).limit(1).select('-_id price');
+
+    values.maxPrice = maxPrice[0].price;
+    values.minPrice = minPrice[0].price;
+
     res.status(200).json({
         success: true,
-        data: products
+        data: products,
+        values,
     });
 });
 
 exports.createNewProduct= asyncHandler(async (req,res,next) => {
     const product = await Product.create(req.body);
+
+
 
     res.status(201).json({
         success:true,

@@ -89,6 +89,7 @@ const ProductsPage = () =>  {
 
     fetchData();
 
+    return () => cancel();
     },[filter,params]);
 
     const onSliderCommitHandler = (e,newValue) => {
@@ -128,7 +129,7 @@ const ProductsPage = () =>  {
                                     variant='outlined'
                                     type='number'
                                     disabled={loading}
-                                    value={0}
+                                    value={priceRange[0]}
                                     />
 
                                 <TextField
@@ -138,7 +139,7 @@ const ProductsPage = () =>  {
                                     variant='outlined'
                                     type='number'
                                     disabled={loading}
-                                    value={75}
+                                    value={priceRange[1]}
                                 />
                             </div>
                         </div>
