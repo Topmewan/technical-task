@@ -16,11 +16,21 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
 
     let queryStr = JSON.stringify(reqQuery);
 
-    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `${match}`);
+    queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `$${match}`);
 
-    const products = await Product.find( JSON.parse(queryStr));
+    query = Product.find(JSON.parse(queryStr));
 
+    if(req.query.sort) {
+        const sortByArr = req.query.sort.split(',')
 
+        const sortByStr = sortByArr.join(' ');
+
+        query = query.sort(sortByStr);
+    } else {
+        query = query.sort('-price');
+    }
+
+    const products = await  query;
     res.status(200).json({
         success: true,
         data: products
