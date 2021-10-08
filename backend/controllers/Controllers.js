@@ -10,10 +10,8 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
     const reqQuery = {...req.query};
 
     const removeFields = ['sort'];
-    console.log(reqQuery);
 
     removeFields.forEach(val => delete reqQuery[val]);
-    console.log(reqQuery);
 
 
     let queryStr = JSON.stringify(reqQuery);
@@ -21,7 +19,6 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
     queryStr = queryStr.replace(/\b(gt|gte|lt|lte|in)\b/g, (match) => `${match}`);
 
     const products = await Product.find( JSON.parse(queryStr));
-    console.log(queryStr);
 
 
     res.status(200).json({
