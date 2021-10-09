@@ -8,7 +8,7 @@ import {
     Paper,
     TextField,
     Radio,
-    FormControl, RadioGroup, FormControlLabel
+    FormControl, RadioGroup, FormControlLabel, Button
 } from "@material-ui/core";
 
 import {useState, useEffect} from "react";
@@ -167,6 +167,13 @@ const ProductsPage = () =>  {
         }
     };
 
+    const clearAllFilter = () => {
+        setFilter('');
+        setSorting('');
+        setPriceRange([0,sliderMax]);
+        history.push('/');
+    };
+
 
 
     return (
@@ -242,9 +249,15 @@ const ProductsPage = () =>  {
                                 />
                             </RadioGroup>
                         </FormControl>
-
                     </Grid>
                 </Grid>
+                <Button
+                    size='small'
+                    color='primary'
+                    onClick={clearAllFilter}
+                >
+                    Сбросить
+                </Button>
             </Paper>
 
             <Grid container spacing={2}>
