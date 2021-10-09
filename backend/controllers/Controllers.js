@@ -7,10 +7,10 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
 
     let query;
 
-    let values = {
+    let uiValues = {
         filtering: {},
-        sorting: {},
-    };
+        sorting: {}
+    }
 
     const reqQuery = {...req.query};
 
@@ -21,7 +21,7 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
     const filterKeys = Object.keys(reqQuery);
     const filterValues = Object.values(reqQuery);
 
-    filterKeys.forEach((val,index) => values.filtering[val] = filterValues[index]);
+    filterKeys.forEach((val,ind) => uiValues.filtering[val] = filterValues[ind]);
 
     let queryStr = JSON.stringify(reqQuery);
 
@@ -30,18 +30,19 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
     query = Product.find(JSON.parse(queryStr));
 
     if(req.query.sort) {
-        const sortByArr = req.query.sort.split(',')
+        const sortByArr = req.query.sort.split(',');
 
         sortByArr.forEach(val => {
             let order;
+
             if(val[0] === '-'){
-                order='descending'
+                order = 'descending';
             } else {
                 order = 'ascending';
             }
 
-            values.sorting[val.replace('-','')] = order;
-        })
+            uiValues.sorting[val.replace('-','')] = order;
+        });
 
         const sortByStr = sortByArr.join(' ');
 
@@ -52,17 +53,16 @@ exports.getAllProducts = asyncHandler(async (req,res,next) => {
 
     const products = await  query;
 
-    const maxPrice = await Product.find().sort({ price: -1}).limit(1).select('-id price');
+    const maxPrice = await Product.find().sort({ price: -1 }).limit(1).select('-_id price');
+    const minPrice = await Product.find().sort({ price: 1 }).limit(1).select('-_id price');
 
-    const minPrice = await Product.find().sort({price:1}).limit(1).select('-_id price');
-
-    values.maxPrice = maxPrice[0].price;
-    values.minPrice = minPrice[0].price;
+    uiValues.maxPrice = maxPrice[0].price;
+    uiValues.minPrice = minPrice[0].price;
 
     res.status(200).json({
         success: true,
         data: products,
-        values,
+        uiValues
     });
 });
 

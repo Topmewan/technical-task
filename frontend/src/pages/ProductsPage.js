@@ -82,6 +82,7 @@ const ProductsPage = () =>  {
                 setLoading(false);
 
             } catch (e) {
+                if (axios.isCancel(e)) return;
                 console.log(e.response.data);
             }
         };
@@ -91,6 +92,26 @@ const ProductsPage = () =>  {
 
     return () => cancel();
     },[filter,params]);
+
+    const handlePriceInputChange = (e,type) => {
+        let newRange;
+
+        if(type === 'lower'){
+
+            newRange = [...priceRange];
+            newRange[0]=Number(e.target.value);
+
+            setPriceRange(newRange);
+        }
+
+        if(type === 'higher'){
+
+            newRange = [...priceRange];
+            newRange[1]=Number(e.target.value);
+
+            setPriceRange(newRange);
+        }
+    }
 
     const onSliderCommitHandler = (e,newValue) => {
         buildRangeFilter(newValue);
@@ -117,7 +138,8 @@ const ProductsPage = () =>  {
                                 max={sliderMax}
                                 value={priceRange}
                                 valueLabelDisplay='auto'
-                                onChange={(e, newValue)=> setPriceRange(newValue)}
+                                disabled={loading}
+                                onChange={(e, newValue) => setPriceRange(newValue)}
                                 onChangeCommitted={onSliderCommitHandler}
                             />
 
@@ -130,6 +152,7 @@ const ProductsPage = () =>  {
                                     type='number'
                                     disabled={loading}
                                     value={priceRange[0]}
+                                    onChange={(e) => handlePriceInputChange(e,'lower')}
                                     />
 
                                 <TextField
@@ -140,6 +163,8 @@ const ProductsPage = () =>  {
                                     type='number'
                                     disabled={loading}
                                     value={priceRange[1]}
+                                    onChange={(e) => handlePriceInputChange(e,'higher')}
+
                                 />
                             </div>
                         </div>
@@ -183,9 +208,7 @@ const ProductsPage = () =>  {
                             </Grid>
                         ))
                     )}
-
             </Grid>
-
         </Container>
     );
 }
