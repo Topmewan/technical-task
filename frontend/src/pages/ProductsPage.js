@@ -10,6 +10,7 @@ import {
     Radio,
     FormControl, RadioGroup, FormControlLabel
 } from "@material-ui/core";
+
 import {useState, useEffect} from "react";
 import {useHistory,useLocation} from "react-router-dom";
 
@@ -55,8 +56,26 @@ const ProductsPage = () =>  {
 
     const [sliderMax, setSliderMax] = useState(1000);
     const[priceRange,setPriceRange] = useState([25,75]);
+    const [priceOrder,setPriceOrder] = useState('descending');
 
     const[filter,setFilter] = useState('');
+    const [sorting, setSorting] = useState('');
+
+
+    const updateUIValues = (uiValues) => {
+        setSliderMax(uiValues.maxPrice);
+
+        if(uiValues.filtering.price){
+            let priceFilter = uiValues.filtering.price;
+
+            setPriceRange([Number(priceFilter.gte), Number(priceFilter.lte)]);
+        }
+
+        if(uiValues.sorting.price) {
+            let priceSort = uiValues.sorting.price;
+            setPriceOrder(priceSort);
+        }
+    }
 
     useEffect(() => {
         let cancel;
@@ -72,6 +91,14 @@ const ProductsPage = () =>  {
                     query = filter;
                 }
 
+                if(sorting){
+                    if(query.length === 0 ) {
+                        query = `?sort=${sorting}`;
+                    } else {
+                        query=query + '&sort=' + sorting;
+                    }
+                }
+
                 const {data} = await axios({
                     method: 'GET',
                     url: `/api/v1/tz${query}`,
@@ -80,6 +107,7 @@ const ProductsPage = () =>  {
 
                 setProducts(data.data);
                 setLoading(false);
+                updateUIValues(data.uiValues);
 
             } catch (e) {
                 if (axios.isCancel(e)) return;
@@ -91,7 +119,7 @@ const ProductsPage = () =>  {
     fetchData();
 
     return () => cancel();
-    },[filter,params]);
+    },[filter,params,sorting]);
 
     const handlePriceInputChange = (e,type) => {
         let newRange;
@@ -111,10 +139,15 @@ const ProductsPage = () =>  {
 
             setPriceRange(newRange);
         }
-    }
+    };
 
     const onSliderCommitHandler = (e,newValue) => {
         buildRangeFilter(newValue);
+    };
+
+    const onTextfieldCommitHandler = () => {
+        buildRangeFilter(priceRange);
+
     };
 
     const buildRangeFilter = (newValue) => {
@@ -123,7 +156,18 @@ const ProductsPage = () =>  {
         setFilter(urlFilter);
 
         history.push(urlFilter);
-    }
+    };
+
+    const handleSortChange = (e) => {
+        setPriceOrder(e.target.value);
+        if(e.target.value === 'ascending'){
+            setSorting('price');
+        } else if (e.target.value === 'descending'){
+            setSorting('-price');
+        }
+    };
+
+
 
     return (
         <Container className={classes.root}>
@@ -153,6 +197,7 @@ const ProductsPage = () =>  {
                                     disabled={loading}
                                     value={priceRange[0]}
                                     onChange={(e) => handlePriceInputChange(e,'lower')}
+                                    onBlur={onTextfieldCommitHandler}
                                     />
 
                                 <TextField
@@ -164,6 +209,8 @@ const ProductsPage = () =>  {
                                     disabled={loading}
                                     value={priceRange[1]}
                                     onChange={(e) => handlePriceInputChange(e,'higher')}
+                                    onBlur={onTextfieldCommitHandler}
+
 
                                 />
                             </div>
@@ -177,14 +224,18 @@ const ProductsPage = () =>  {
                             <RadioGroup
                                 aria-label='price-order'
                                 name='price-order'
+                                value={priceOrder}
+                                onChange={handleSortChange}
                             >
                                 <FormControlLabel
+                                    value='descending'
                                     control={<Radio/>}
                                     label='Цена: По убыванию'
                                     disabled={loading}
                                 />
 
                                 <FormControlLabel
+                                    value='ascending'
                                     control={<Radio/>}
                                     label='Цена: По возрастанию'
                                     disabled={loading}
